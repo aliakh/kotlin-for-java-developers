@@ -1,6 +1,94 @@
 package rationals
 
+import java.lang.IllegalArgumentException
+import java.math.BigInteger
 
+class Rational(private val numerator: BigInteger, private val denominator: BigInteger) : Comparable<Rational> {
+
+    init {
+        if (denominator == BigInteger.ZERO) {
+            throw IllegalArgumentException("Denominator cannot be 0")
+        }
+    }
+
+    operator fun plus(other: Rational): Rational {
+        val n = numerator * other.denominator + other.numerator * denominator
+        val d = denominator * other.denominator
+        return Rational(n, d)
+    }
+
+    operator fun minus(other: Rational): Rational {
+        val n = numerator * other.denominator - other.numerator * denominator
+        val d = denominator * other.denominator
+        return Rational(n, d)
+    }
+
+    operator fun times(other: Rational): Rational {
+        val n = numerator * other.numerator
+        val d = denominator * other.denominator
+        return Rational(n, d)
+    }
+
+    operator fun div(other: Rational): Rational {
+        val n = numerator * other.denominator
+        val d = denominator * other.numerator
+        return Rational(n, d)
+    }
+
+    operator fun unaryMinus(): Rational = Rational(-numerator, denominator)
+
+    override fun compareTo(other: Rational): Int {
+        return (numerator * other.denominator).compareTo(denominator * other.numerator)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+        if (other !is Rational) {
+            return false
+        }
+
+        return compareTo(other) == 0
+    }
+
+    override fun hashCode(): Int {
+        var result = numerator.hashCode()
+        result = 31 * result + denominator.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        val r = normalize()
+        return if (r.denominator == BigInteger.ONE) {
+            "${r.numerator}"
+        } else {
+            "${r.numerator}/${r.denominator}"
+        }
+    }
+
+    private fun normalize(): Rational {
+        val gcd = numerator.gcd(denominator)
+        return if (denominator < BigInteger.ZERO) {
+            Rational(-numerator / gcd, -denominator / gcd)
+        } else {
+            Rational(numerator / gcd, denominator / gcd)
+        }
+    }
+}
+
+infix fun Int.divBy(other: Int): Rational = Rational(this.toBigInteger(), other.toBigInteger())
+infix fun Long.divBy(other: Long): Rational = Rational(this.toBigInteger(), other.toBigInteger())
+infix fun BigInteger.divBy(other: BigInteger): Rational = Rational(this, other)
+
+fun String.toRational(): Rational {
+    val tokens = split("/")
+    return when (tokens.size) {
+        1 -> Rational(tokens[0].toBigInteger(), 1.toBigInteger())
+        2 -> Rational(tokens[0].toBigInteger(), tokens[1].toBigInteger())
+        else -> throw IllegalArgumentException("Cannot parse Rational from '$this'")
+    }
+}
 
 fun main() {
     val half = 1 divBy 2
