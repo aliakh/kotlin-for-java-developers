@@ -88,7 +88,7 @@ files:
   - name: src/games/gameOfFifteen/GameOfFifteen.kt
     visible: true
     placeholders:
-      - offset: 385
+      - offset: 2645
         length: 6
         placeholder_text: TODO()
         initial_state:
@@ -102,20 +102,20 @@ files:
     visible: true
     placeholders:
       - offset: 480
-        length: 6
+        length: 475
         placeholder_text: TODO()
         initial_state:
           length: 6
           offset: 480
         initialized_from_dependency: false
-        selected: false
+        selected: true
         status: Unchecked
     learner_created: false
   - name: src/games/gameOfFifteen/GameOfFifteenInitializer.kt
     visible: true
     placeholders:
-      - offset: 576
-        length: 6
+      - offset: 835
+        length: 14
         placeholder_text: TODO()
         initial_state:
           length: 6

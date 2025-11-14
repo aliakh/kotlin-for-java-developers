@@ -1,5 +1,7 @@
 package games.gameOfFifteen
 
+import java.util.Random
+
 interface GameOfFifteenInitializer {
     /*
      * Even permutation of numbers 1..15
@@ -17,7 +19,12 @@ class RandomGameInitializer : GameOfFifteenInitializer {
      * by swapping two numbers).
      */
     override val initialPermutation by lazy {
-        TODO()
+        generateSequence {
+            // create a random permutation of numbers 1..15
+            (1..15).shuffled()
+        }.first { permutation ->
+            // accept the first permutation that has even parity
+            isEven(permutation)
+        }
     }
 }
-
