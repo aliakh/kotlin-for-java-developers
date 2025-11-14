@@ -17,6 +17,19 @@ package games.game2048
  *
  * You can find more examples in 'TestGame2048Helper'.
 */
-fun <T : Any> List<T?>.moveAndMergeEqual(merge: (T) -> T): List<T> =
-        TODO()
+fun <T : Any> List<T?>.moveAndMergeEqual(merge: (T) -> T): List<T> {
+    // get all filled cells
+    val filledCells = filterNotNull().toMutableList()
 
+    var i = 1
+    while (i < filledCells.size) {
+        if (filledCells[i] == filledCells[i - 1]) {
+            // merge a cell with the previous cell
+            filledCells[i - 1] = merge(filledCells[i])
+            filledCells.removeAt(i)
+        }
+        i++
+    }
+
+    return filledCells
+}

@@ -41,7 +41,10 @@ class Game2048(private val initializer: Game2048Initializer<Int>) : Game {
  * Add a new value produced by 'initializer' to a specified cell in a board.
  */
 fun GameBoard<Int?>.addNewValue(initializer: Game2048Initializer<Int>) {
-    TODO()
+    val cellAndValue = initializer.nextValue(this)
+    if (cellAndValue != null) {
+        this[cellAndValue.first] = cellAndValue.second
+    }
 }
 
 /*
@@ -53,7 +56,22 @@ fun GameBoard<Int?>.addNewValue(initializer: Game2048Initializer<Int>) {
  * Return 'true' if the values were moved and 'false' otherwise.
  */
 fun GameBoard<Int?>.moveValuesInRowOrColumn(rowOrColumn: List<Cell>): Boolean {
-    TODO()
+    // extract current cells and apply merge logic
+    val mergedCells = rowOrColumn
+        .map { cell -> this[cell] }
+        .moveAndMergeEqual { value -> value * 2 }
+
+    // if nothing changed, exit early
+    if (mergedCells.isEmpty() || mergedCells.size == rowOrColumn.size) {
+        return false
+    }
+
+    // write merged values to the board; remaining cells become null
+    rowOrColumn.forEachIndexed { index, cell ->
+        this[cell] = mergedCells.getOrNull(index)
+    }
+
+    return true
 }
 
 /*
@@ -64,5 +82,41 @@ fun GameBoard<Int?>.moveValuesInRowOrColumn(rowOrColumn: List<Cell>): Boolean {
  * Return 'true' if the values were moved and 'false' otherwise.
  */
 fun GameBoard<Int?>.moveValues(direction: Direction): Boolean {
-    TODO()
+    when (direction) {
+        Direction.RIGHT -> {
+            var moved = false
+            for (i in 1..width) {
+                val row = getRow(i, 1..width)
+                moved = moveValuesInRowOrColumn(row.reversed()) || moved
+            }
+            return moved
+        }
+
+        Direction.LEFT -> {
+            var moved = false
+            for (i in 1..width) {
+                val row = getRow(i, 1..width)
+                moved = moveValuesInRowOrColumn(row) || moved
+            }
+            return moved
+        }
+
+        Direction.DOWN -> {
+            var moved = false
+            for (j in 1..width) {
+                val column = getColumn(1..width, j)
+                moved = moveValuesInRowOrColumn(column.reversed()) || moved
+            }
+            return moved
+        }
+
+        Direction.UP -> {
+            var moved = false
+            for (j in 1..width) {
+                val column = getColumn(1..width, j)
+                moved = moveValuesInRowOrColumn(column) || moved
+            }
+            return moved
+        }
+    }
 }
